@@ -1,8 +1,9 @@
 let particles = [];
-const num = 1000;
-const radius = 175;
+let num;
+let radius;
 let startX; 
 let startY;
+let t = 0;
 
 function polToCart(r, angle) {
 	return createVector(r * cos(angle), r * sin(angle));
@@ -16,40 +17,46 @@ function setup() {
 }
 
 function draw() {
-	let t = frameCount;
 	translate(width/2, height/2);
 	for (let i = 0; i < particles.length; i++) {
 		particles[i].show();
 		particles[i].move(i);
 		particles[i].fade();
-		
-		if (t > 500) {
-			particles = [];
-		}
 	}
+
+	if (t > 500) {
+		particles = [];
+	}
+
+	if (t > 750) {
+		fill(0);
+		rect(-windowWidth/2, -windowHeight/2, windowWidth, windowHeight);
+		seed();
+		t = 0;
+	}
+
+	t++;
 }
 
 function seed() {
+	num = random(500, 5000);
+	radius = random(100, 250);
 	translate(width/2, height/2);
 	const spacing = 360 / num;
 	for (let a = 0; a < 360; a+=spacing) {
 		let point = polToCart(radius, a);
-		startX = point.x;
-		startY = point.y;
-		let particle = new Particle(point.x, point.y, 1, 255, a, startX, startY);
+		let particle = new Particle(point.x, point.y, 1, 255, a);
 		particles.push(particle);
 	}
 }
 
 class Particle {
-	constructor(x, y, r, op, a, startX, startY) {
+	constructor(x, y, r, op, a) {
 		this.x = x;
 		this.y = y;
 		this.r = r;
 		this.op = op;
 		this.a = a;
-		this.startX = startX;
-		this.startY = startY;
 		this.slow = 600;
 		this.mov = .2;
 		this.fadeT = 1;
